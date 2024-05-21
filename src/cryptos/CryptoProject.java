@@ -1,5 +1,3 @@
-package sorters;
-
 import javax.crypto.*;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,16 +8,14 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 
-public class Labb {
+public class CryptoProject {
 
     static LinkedList<Integer> copiedList;
     static String input;
     static String algorithm;
     static SecretKey key;
-    static CryptoMethods crypto;
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        crypto = new CryptoMethods();
         algorithm = args[0];
         Integer keyLen = Integer.parseInt(args[1]);
         String outFile = args[2];
@@ -57,7 +53,7 @@ public class Labb {
 
         for (int i = 0; i < iterations; i++) {
             startTime = System.nanoTime();
-            crypto.encrypt(algorithm, input, key);
+            encrypt(algorithm, input, key);
             endTime = System.nanoTime();
             evaluationTimes.add(endTime-startTime);
             copiedList = null;
@@ -84,5 +80,15 @@ public class Labb {
         keyGenerator.init(n);
         SecretKey key = keyGenerator.generateKey();
         return key;
+    }
+
+    public static String encrypt(String algorithm, String input, SecretKey key) throws NoSuchPaddingException, NoSuchAlgorithmException,
+            InvalidAlgorithmParameterException, InvalidKeyException,
+            BadPaddingException, IllegalBlockSizeException {
+
+        Cipher cipher = Cipher.getInstance(algorithm);
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] cipherText = cipher.doFinal(input.getBytes());
+        return Base64.getEncoder().encodeToString(cipherText);
     }
 }
